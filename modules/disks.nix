@@ -42,23 +42,6 @@ let
 in
 
 {
-  boot.postBootCommands = ''
-    if [ ! -f /var/lib/resize-partitions-done ]; then
-      set -euo pipefail
-      set -x
-
-      rootPart=$(${pkgs.util-linux}/bin/findmnt -n -o SOURCE /)
-      bootDevice=$(lsblk -npo PKNAME $rootPart)
-      partNum=$(lsblk -npo MAJ:MIN $rootPart | ${pkgs.gawk}/bin/awk -F: '{print $2}')
-
-      echo ",+," | sfdisk -N$partNum --no-reread $bootDevice
-      ${pkgs.parted}/bin/partprobe
-      ${pkgs.btrfs-progs}/bin/btrfs filesystem resize max /
-
-      rm -f /var/lib/resize-partitions-done
-    fi
-  '';
-
   services.btrfs.autoScrub = {
     enable = true;
     interval = "monthly";
@@ -108,17 +91,12 @@ in
                     let
                       subvolAbsPath = lib.strings.normalizePath "${btrfsMntPoint}/${subvol.name}";
                       dst = "${subvolAbsPath}-blank";
-                      # NOTE: this one-liner has the same functionality (inspired by zfs hook)
-                      # btrfs subvolume list -s mnt/rootfs | grep -E ' rootfs-blank$' || btrfs subvolume snapshot -r mnt/rootfs mnt/rootfs-blank
                     in
                     ''
-                      if ! btrfs subvolume show "${dst}" > /dev/null 2>&1; then
-                        btrfs subvolume snapshot -r "${subvolAbsPath}" "${dst}"
+                      if ! btrfs subvolume show ${dst} > /dev/null 2>&1; then
+                        btrfs subvolume snapshot -r ${subvolAbsPath} ${dst}
                       fi
                     '';
-                  # Mount top-level subvolume (/) with "subvol=/", without it
-                  # the default subvolume will be mounted. They're the same in
-                  # this case, though. So "subvol=/" isn't really necessary
                 in
                 ''
                   MNTPOINT=$(mktemp -d)
