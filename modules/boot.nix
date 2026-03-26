@@ -23,8 +23,8 @@
     '';
 
     kernelPackages = pkgs.linuxAndFirmware.latest.linuxPackages_rpi5;
-    loader.raspberryPi.bootloader = "kernel";
-    loader.raspberryPi.firmwarePackage = pkgs.linuxAndFirmware.latest.raspberrypifw;
+    loader.raspberry-pi.bootloader = "kernel";
+    loader.raspberry-pi.firmwarePackage = pkgs.linuxAndFirmware.latest.raspberrypifw;
     tmp.useTmpfs = true;
   };
 }

@@ -47,9 +47,9 @@ in
   users.users.root.openssh.authorizedKeys.keys = [ sshPubKey ];
 
   system.nixos.tags = [
-    "raspberry-pi-${config.boot.loader.raspberryPi.variant}"
+    "raspberry-pi-${config.boot.loader.raspberry-pi.variant}"
     config.boot.kernelPackages.kernel.version
-    config.boot.loader.raspberryPi.bootloader
+    config.boot.loader.raspberry-pi.bootloader
   ];
 
   nixpkgs.overlays = lib.mkAfter [
