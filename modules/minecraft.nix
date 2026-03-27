@@ -40,4 +40,21 @@ in
     ln -sf ${geyserPlugin} plugins/Geyser-Spigot.jar
     ln -sf ${floodgatePlugin} plugins/Floodgate-Spigot.jar
   '';
+
+  # systemd.services.playit = {
+  #   description = "Playit.gg client";
+  #   wantedBy = [ "multi-user.target" ];
+  #   after = [ "network-online.target" ];
+  #   wants = [ "network-online.target" ];
+  #   serviceConfig = {
+  #     ExecStart = lib.getExe pkgs.playit-agent;
+  #     Restart = "on-failure";
+  #     RestartSec = "5s";
+  #     DynamicUser = true;
+  #     StateDirectory = "playit";
+  #     WorkingDirectory = "%S/playit";
+  #   };
+  # };
+
+  environment.systemPackages = [ pkgs.playit-agent ];
 }

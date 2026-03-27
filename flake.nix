@@ -10,16 +10,30 @@
   };
 
   outputs =
-    { nixos-raspberrypi, ... }@inputs:
-    # let
-    #   allSystems = [
-    #     "aarch64-darwin"
-    #     "aarch64-linux"
-    #   ];
+    {
+      nixos-raspberrypi,
+      nixpkgs,
+      self,
+      ...
+    }@inputs:
+    let
+      systems = [
+        "aarch64-darwin"
+        "aarch64-linux"
+      ];
 
-    #   forSystems =
-    #     systems: f: nixpkgs.lib.genAttrs systems (system: f (import nixpkgs { inherit system; }));
-    # in
+      eachSystem =
+        f:
+        nixpkgs.lib.genAttrs systems (
+          system:
+          f (
+            import nixpkgs {
+              inherit system;
+              overlays = [ self.overlays.default ];
+            }
+          )
+        );
+    in
     {
       # devShells = forSystems allSystems (pkgs: {
       #   default = pkgs.mkShell { nativeBuildInputs = [ pkgs.nix-output-monitor ]; };
@@ -39,6 +53,17 @@
           inputs.nixos-raspberrypi.nixosModules.raspberry-pi-5.page-size-16k
         ];
       };
+
+      packages = eachSystem (pkgs: {
+        inherit (pkgs) playit-agent;
+      });
+
+      overlays.default =
+        final: prev:
+        (nixpkgs.lib.packagesFromDirectoryRecursive {
+          inherit (final) callPackage;
+          directory = ./pkgs;
+        });
     };
 
   nixConfig = {
