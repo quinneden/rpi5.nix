@@ -7,6 +7,10 @@ let
     url = "https://download.geysermc.org/v2/projects/geyser/versions/2.9.5/builds/1106/downloads/spigot";
     hash = "sha256-zB9bX7WTh8IEaqiIMO18Zxl2K2ZOwLVRSwg5wYyrMvQ=";
   };
+  floodgatePlugin = pkgs.fetchurl {
+    url = "https://download.geysermc.org/v2/projects/floodgate/versions/2.2.5/builds/131/downloads/spigot";
+    hash = "sha256-/4ET56lDGYOF4GEqcuRYAtnJqJeGo8+uhzzCMiMzIWc=";
+  };
 in
 {
   services.minecraft-server = {
@@ -29,10 +33,11 @@ in
   # Open the default UDP port (19132) for Bedrock Edition (Geyser)
   networking.firewall.allowedUDPPorts = [ 19132 ];
 
-  # Ensure the plugins directory exists and the Geyser plugin is copied
+  # Ensure the plugins directory exists and the plugins are symlinked
   # before the server starts.
   systemd.services.minecraft-server.preStart = lib.mkAfter ''
     mkdir -p plugins
     ln -sf ${geyserPlugin} plugins/Geyser-Spigot.jar
+    ln -sf ${floodgatePlugin} plugins/Floodgate-Spigot.jar
   '';
 }
