@@ -35,15 +35,8 @@
         );
     in
     {
-      # devShells = forSystems allSystems (pkgs: {
-      #   default = pkgs.mkShell { nativeBuildInputs = [ pkgs.nix-output-monitor ]; };
-      # });
-
       nixosConfigurations.rpi5 = nixos-raspberrypi.lib.nixosSystemFull {
-        specialArgs = {
-          inherit inputs;
-          inherit nixos-raspberrypi;
-        };
+        specialArgs = { inherit inputs nixos-raspberrypi self; };
         modules = [
           ./modules
           inputs.disko.nixosModules.disko

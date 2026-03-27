@@ -41,18 +41,48 @@ in
     ln -sf ${floodgatePlugin} plugins/Floodgate-Spigot.jar
   '';
 
-  # systemd.services.playit = {
-  #   description = "Playit.gg client";
+  users.users.playit_agent = {
+    description = "Playit.gg agent service user";
+    home = "/var/lib/playit_agent";
+    createHome = true;
+    isSystemUser = true;
+    group = "playit_agent";
+  };
+  users.groups.playit_agent = { };
+
+  systemd.services.playit-agent = {
+    enable = true;
+    description = "Playit.gg agent service";
+    wantedBy = [ "multi-user.target" ];
+    after = [ "network.target" ];
+
+    serviceConfig = {
+      ExecStart = "${lib.getExe pkgs.playit-agent} --secret_path /etc/playit_gg/playit.toml start";
+      Restart = "always";
+      User = "playit_agent";
+      WorkingDirectory = "/var/lib/playit_agent";
+
+      # StandardInput = "socket";
+      # StandardOutput = "journal";
+      # StandardError = "journal";
+    };
+  };
+
+  # systemd.services.playit-agent = {
+  #   description = "Playit.gg agent";
   #   wantedBy = [ "multi-user.target" ];
   #   after = [ "network-online.target" ];
-  #   wants = [ "network-online.target" ];
+
+  #   script = ''
+  #     ${lib.getExe pkgs.playit-agent} --secret_path /etc/playit_gg/playit.toml start
+  #   '';
+
   #   serviceConfig = {
-  #     ExecStart = lib.getExe pkgs.playit-agent;
   #     Restart = "on-failure";
   #     RestartSec = "5s";
   #     DynamicUser = true;
-  #     StateDirectory = "playit";
-  #     WorkingDirectory = "%S/playit";
+  #     StateDirectory = "playit_gg";
+  #     WorkingDirectory = "%S/playit_gg";
   #   };
   # };
 

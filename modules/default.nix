@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  self,
   ...
 }:
 
@@ -55,6 +56,7 @@ in
   ];
 
   nixpkgs.overlays = lib.mkAfter [
+    self.overlays.default
     (final: prev: {
       inherit (final.linuxAndFirmware.latest) raspberrypifw raspberrypiWirelessFirmware;
     })
