@@ -126,26 +126,26 @@ in
                   mountpoint = "/";
                 };
 
-                "/swap" = {
-                  mountpoint = "/.swapvol";
-                  swap."swapfile" = {
-                    size = "8G";
-                    priority = 3;
-                  };
-                };
+                # "/swap" = {
+                #   mountpoint = "/.swapvol";
+                #   swap."swapfile" = {
+                #     size = "8G";
+                #     priority = 3;
+                #   };
+                # };
               };
             };
           };
 
-          swap = {
-            type = "8200";
-            size = "9G";
-            content = {
-              type = "swap";
-              resumeDevice = true;
-              priority = 2;
-            };
-          };
+          # swap = {
+          #   type = "8200";
+          #   size = "9G";
+          #   content = {
+          #     type = "swap";
+          #     resumeDevice = true;
+          #     priority = 2;
+          #   };
+          # };
         };
       };
     };
