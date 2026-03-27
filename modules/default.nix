@@ -14,9 +14,11 @@ in
     ./boot.nix
     ./config-txt.nix
     ./disks.nix
+    ./minecraft.nix
     ./networking.nix
     ./nice-looking-console.nix
     ./stub.nix
+    ./tailscale.nix
   ];
 
   time.timeZone = "America/Los_Angeles";

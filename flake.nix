@@ -4,6 +4,7 @@
   inputs = {
     disko.url = "github:nix-community/disko";
     disko.inputs.nixpkgs.follows = "nixos-raspberrypi/nixpkgs";
+    nix-minecraft.url = "github:Infinidoge/nix-minecraft";
     nixos-raspberrypi.url = "github:nvmd/nixos-raspberrypi?ref=main";
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
   };
