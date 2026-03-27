@@ -21,7 +21,7 @@
       # whitelist = { };
 
       symlinks = {
-        mods = pkgs.linkFarmFromDrvs "mods" (
+        plugins = pkgs.linkFarmFromDrvs "plugins" (
           builtins.attrValues {
             Geyser-Spigot = pkgs.fetchurl {
               url = "https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/spigot";
