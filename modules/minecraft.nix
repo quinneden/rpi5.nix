@@ -19,7 +19,7 @@ in
     openFirewall = true; # Opens the default TCP port (25565) for Java Edition
 
     # Use PaperMC as the server software
-    package = pkgs.papermc;
+    package = pkgs.papermcServers.papermc-1_21_11;
 
     # Make server.properties declarative
     declarative = true;
@@ -67,24 +67,6 @@ in
       # StandardError = "journal";
     };
   };
-
-  # systemd.services.playit-agent = {
-  #   description = "Playit.gg agent";
-  #   wantedBy = [ "multi-user.target" ];
-  #   after = [ "network-online.target" ];
-
-  #   script = ''
-  #     ${lib.getExe pkgs.playit-agent} --secret_path /etc/playit_gg/playit.toml start
-  #   '';
-
-  #   serviceConfig = {
-  #     Restart = "on-failure";
-  #     RestartSec = "5s";
-  #     DynamicUser = true;
-  #     StateDirectory = "playit_gg";
-  #     WorkingDirectory = "%S/playit_gg";
-  #   };
-  # };
 
   environment.systemPackages = [ pkgs.playit-agent ];
 }
