@@ -5,7 +5,6 @@
     disko.url = "github:nix-community/disko";
     disko.inputs.nixpkgs.follows = "nixpkgs";
     nixos-raspberrypi.url = "github:nvmd/nixos-raspberrypi";
-    nixos-raspberrypi.inputs.nixpkgs.follows = "nixpkgs";
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
   };
 
@@ -35,21 +34,28 @@
         );
     in
     {
+      apps = eachSystem (pkgs: {
+        deploy = {
+          type = "app";
+          program = pkgs.lib.getExe (pkgs.callPackage ./apps/deploy { inherit self; });
+        };
+      });
+
       nixosConfigurations.rpi5 = nixos-raspberrypi.lib.nixosSystemFull {
+        inherit nixpkgs;
         specialArgs = { inherit inputs nixos-raspberrypi self; };
         modules = [
-          ./modules
+          ./config
           inputs.disko.nixosModules.disko
           inputs.nixos-raspberrypi.nixosModules.raspberry-pi-5.base
           inputs.nixos-raspberrypi.nixosModules.raspberry-pi-5.bluetooth
           inputs.nixos-raspberrypi.nixosModules.raspberry-pi-5.display-vc4
           inputs.nixos-raspberrypi.nixosModules.raspberry-pi-5.page-size-16k
+          self.nixosModules.playit-agent
         ];
       };
 
-      packages = eachSystem (pkgs: {
-        inherit (pkgs) playit-agent;
-      });
+      nixosModules = import ./modules;
 
       overlays.default =
         final: prev:
@@ -57,6 +63,18 @@
           inherit (final) callPackage;
           directory = ./pkgs;
         });
+
+      packages = eachSystem (pkgs: {
+        inherit (pkgs) playit-agent;
+        default = self.packages.${pkgs.stdenv.hostPlatform.system}.diskImage;
+        diskImage =
+          let
+            extended = self.nixosConfigurations.rpi5.extendModules {
+              modules = [ self.nixosModules.disk-image ];
+            };
+          in
+          extended.config.system.build.diskoImages;
+      });
     };
 
   nixConfig = {
